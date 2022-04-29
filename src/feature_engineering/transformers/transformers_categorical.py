@@ -3,6 +3,7 @@ import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.preprocessing import OneHotEncoder
 from typing import List
+import re
 
 
 # Transformes extra
@@ -10,7 +11,7 @@ class Cabin_Letter_Extractor(BaseEstimator, TransformerMixin):
     def __init__(self):
         pass
 
-    def fit(self):
+    def fit(self, X: pd.DataFrame, y=None):
         pass
 
     def transform(self, X: pd.DataFrame, y=None):
@@ -22,15 +23,15 @@ class Cabin_Letter_Extractor(BaseEstimator, TransformerMixin):
 
 
 class GetTitle(BaseEstimator, TransformerMixin):
-    def __init__(self, variable: str):
-        self.variable = variable
+    def __init__(self):
+        pass
 
     def fit(self, X: pd.DataFrame):
-        return self
+        pass
 
     def transform(self, X: pd.DataFrame):
-        X[self.variable] = [
-            (name.split(",")[1]).split(".")[0].strip() for name in X[self.variable]
+        X["title"] = [
+            (name.split(",")[1]).split(".")[0].strip() for name in X["name"]
         ]
         return X
 
@@ -40,10 +41,10 @@ class DropColumns(BaseEstimator, TransformerMixin):
         self.variables = variables
 
     def fit(self, X: pd.DataFrame):
-        return self
+        pass
 
     def transform(self, X: pd.DataFrame):
-        X = X.drop(self.variables, axis=1, inplace=True)
+        X = X.drop(self.variables, axis=1)
         return X
 
 
@@ -52,7 +53,7 @@ class ExtractLetterCategoricalEncoder(BaseEstimator, TransformerMixin):
         self.variables = variables
 
     def fit(self, X: pd.DataFrame):
-        return self
+        pass
 
     def transform(self, X: pd.DataFrame):
         X[self.variables] = [
@@ -67,9 +68,9 @@ class CategoricalImputerEncoder(BaseEstimator, TransformerMixin):
         self.variables = variables
 
     def fit(self, X: pd.DataFrame):
-        return self
+        pass
 
-    def transform(self, X: pd.DataFrame):
+    def transform(self, X: pd.DataFrame, variables: List[str]):
         X[self.variables] = X[self.variables].fillna("missing")
         return X
 
@@ -100,7 +101,7 @@ class OneHotEncoderImputer(BaseEstimator, TransformerMixin):
         self.variables = variables
 
     def fit(self, X: pd.DataFrame):
-        return self
+        pass
 
     def transform(self, X: pd.DataFrame):
         enc = OneHotEncoder(handle_unknown="ignore", drop="first")
@@ -110,9 +111,3 @@ class OneHotEncoderImputer(BaseEstimator, TransformerMixin):
         ).toarray()
         X = X.drop(self.variables, axis=1, inplace=True)
         return X
-
-
-# X_train[enc.get_feature_names_out(cat_vars)] = enc.transform(
-#    X_train[cat_vars]
-# ).toarray()
-# X_test[enc.get_feature_names_out(cat_vars)] = enc.transform(X_test[cat_vars]).toarray()

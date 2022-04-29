@@ -4,20 +4,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score, roc_auc_score
 import pandas as pd
-from transformers import transformers_categorical as tc
-from transformers import transformers_numerical as tm
-import os
-
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-os.chdir(PROJECT_ROOT)
-dir = os.getcwd()
+from feature_engineering.transformers import transformers_categorical as tc
+from feature_engineering.transformers import transformers_numerical as tm
 from data.utils import config as cf
 
 
 titanic_pipeline = Pipeline(
     [
         ("cabin_only_letter", tc.Cabin_Letter_Extractor()),
-        ("get_only_title", tc.GetTitle()),
         ("drop_columns", tc.DropColumns()),
         ("missing_indicator", tm.Missing_Indicator(variables=cf.NUMERICAL_VARS)),
         (
@@ -26,7 +20,7 @@ titanic_pipeline = Pipeline(
         ),
         ("median_imputation", tm.MedianImputer(variables=cf.NUMERICAL_VARS)),
         ("rare_labels", tc.RareLabelEncoder(tol=0.05, variables=cf.CATEGORICAL_VARS)),
-        ("dummy_vars", tc.OneHotEncoder(variables=cf.CATEGORICAL_VARS)),
+        ("dummy_vars", tc.OneHotEncoderImputer(variables=cf.CATEGORICAL_VARS)),
         ("scaling", MinMaxScaler()),
         (
             "log_reg",
@@ -37,14 +31,18 @@ titanic_pipeline = Pipeline(
     ]
 )
 
+df = pd.read_csv(cf.URL, na_values="?")
 
-df = pd.read_csv(cf.URL)
+df.to_csv("data/raw/raw_titanic.csv")
 
 X_train, X_test, y_train, y_test = train_test_split(
     df.drop(cf.TARGET, axis=1), df[cf.TARGET], test_size=0.2, random_state=cf.SEED_SPLIT
 )
 
-titanic_pipeline.fit(X_train, y_train)
+X_train.to_csv(cf.TRAIN_DATA_FILE, index=False)
+X_test.to_csv(cf.TEST_DATA_FILE, index=False)
+
+titanic_pipeline.fit_transform(X_train, y_test)
 
 class_pred = titanic_pipeline.predict(X_test)
 proba_pred = titanic_pipeline.predict_proba(X_test)[:, 1]

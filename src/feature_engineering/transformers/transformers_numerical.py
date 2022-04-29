@@ -5,28 +5,40 @@ from typing import List
 
 
 class Missing_Indicator(BaseEstimator, TransformerMixin):
-    def __init__(self):
-        pass
+    def __init__(self, variables:List[str]):
+        self.variables= variables
 
-    def fit(self):
-        pass
+    def fit(self, X:pd.DataFrame, variables:List[str]):
+        self.variables= variables
+        return self
 
-    def transform(self, X: pd.DataFrame, col_names_list: List[str], y=None):
+    def transform(self, X: pd.DataFrame, variables:List[str]):
+        self.variables=variables
         X = pd.DataFrame(X).copy()
-        for col_name in col_names_list:
-            X[col_name + "_nan"] = X[col_name].isnull().astype(int)
+        X[self.variables+"_nan"] = X[self.variables].isnull().astype(int)
         return X
+
+class DropColumns(BaseEstimator, TransformerMixin):
+    def __init__(self, variables: List[str] = None):
+        self.variables = variables
+
+    def fit(self, X: pd.DataFrame):
+        X = X.drop(self.variables, axis=1, inplace=True)
+        return X
+
+    def transform(self, X: pd.DataFrame):
+        return self
 
 
 class MedianImputer(BaseEstimator, TransformerMixin):
     def __init__(self, variables: List[str]):
         self.variables = variables
 
-    def fit(self, X: pd.DataFrame):
-        return self
-
-    def transform(self, X: pd.DataFrame):
+    def fit(self, X: pd.DataFrame, variables: List[str]):
         imp_median = SimpleImputer(strategy="median")
         imp_median.fit(X[self.variables])
         X[self.variables] = imp_median.transform(X[self.variables])
         return X
+
+    def transform(self, X: pd.DataFrame):
+        return self
