@@ -4,9 +4,14 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score, roc_auc_score
 import pandas as pd
-from src.feature_engineering.transformers import transformers_categorical as tc
-from src.feature_engineering.transformers import transformers_numerical as tm
-from src.data.utils import config as cf
+from transformers import transformers_categorical as tc
+from transformers import transformers_numerical as tm
+import os
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+os.chdir(PROJECT_ROOT)
+dir = os.getcwd()
+from data.utils import config as cf
 
 
 titanic_pipeline = Pipeline(
