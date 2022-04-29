@@ -1,19 +1,24 @@
 from src.data.utils import config as cf
 import pandas as pd
-import re
-from src.feature_engineering.transformers import transformers_categorical as tc
-from src.feature_engineering.transformers import transformers_numerical as tn
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, roc_auc_score
+from src.data.utils import config as cf
+from src.pipeline import titanic_pipeline
 
 df = pd.read_csv(cf.URL, na_values="?")
-df["cabin"] = df.cabin.apply(lambda x: x[0] if type(x) == str else x)
-df["title"] = df.name.apply(lambda x: x.split(",")[1].split(".")[0])
-df.drop(columns=cf.DROP_COLS, inplace=True)
-print(df)
 
-df2 = df
-rare_labels = tn.MedianImputer(variables=cf.NUMERICAL_VARS)
-rare_labels.fit(df2)
-df2 = rare_labels.transform(df2)
+df.to_csv("data/raw/raw_titanic.csv")
 
-print(df2)
+X_train, X_test, y_train, y_test = train_test_split(
+    df.drop(cf.TARGET, axis=1), df[cf.TARGET], test_size=0.2, random_state=cf.SEED_SPLIT
+)
+
+X_train.to_csv(cf.TRAIN_DATA_FILE, index=False)
+X_test.to_csv(cf.TEST_DATA_FILE, index=False)
+
+titanic_pipeline.fit(X_train, y_test)
+
+class_pred = titanic_pipeline.predict(X_test)
+proba_pred = titanic_pipeline.predict_proba(X_test)[:, 1]
+print("test roc-auc : {}".format(roc_auc_score(y_test, proba_pred)))
+print("test accuracy: {}".format(accuracy_score(y_test, class_pred)))
