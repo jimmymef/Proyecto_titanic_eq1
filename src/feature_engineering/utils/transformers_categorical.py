@@ -2,11 +2,12 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 from typing import List
 
+
 class MissingCategoricalImputerEncoder(BaseEstimator, TransformerMixin):
     def __init__(self, variables: List[str]):
         self.variables = variables
 
-    def fit(self, X: pd.DataFrame, y:pd.DataFrame = None):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None):
         return self
 
     def transform(self, X: pd.DataFrame):
@@ -20,12 +21,12 @@ class RareLabelEncoder(BaseEstimator, TransformerMixin):
         self.tol = tol
         self.variables = variables
 
-    def fit(self, X: pd.DataFrame, y:pd.DataFrame=None):
+    def fit(self, X: pd.DataFrame, y: pd.DataFrame = None):
         self.valid_labels_dict = {}
         for var in self.variables:
             t = X[var].value_counts() / X.shape[0]
             self.valid_labels_dict[var] = t[t > self.tol].index.tolist()
-            return(self)
+            return self
 
     def transform(self, X: pd.DataFrame):
         X = X.copy()

@@ -6,7 +6,15 @@ from utils import config
 df = pd.read_csv(config.URL, na_values="?")
 
 df["cabin"] = df["cabin"].apply(lambda x: x[0] if type(x) == str else x)
-df["title"] = df['name'].apply(lambda x: (x.split(",")[1]).split(".")[0]).apply(lambda x: x if (x.lower()).strip() in ["mrs", "mr", "miss", "master"] else "other")
+df["title"] = (
+    df["name"]
+    .apply(lambda x: (x.split(",")[1]).split(".")[0])
+    .apply(
+        lambda x: x
+        if (x.lower()).strip() in ["mrs", "mr", "miss", "master"]
+        else "other"
+    )
+)
 df.drop(columns=config.DROP_COLS, inplace=True)
 
 # Write data
