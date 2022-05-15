@@ -1,6 +1,11 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from utils import config
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+
+import config
 
 # Loading data from specific url
 df = pd.read_csv(config.URL, na_values="?")

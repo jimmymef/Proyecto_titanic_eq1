@@ -1,5 +1,6 @@
 import pandas as pd
-import numpy as np
+import sys
+import os
 from utils import transformers_categorical as tc
 from utils import transformers_numerical as tn
 from sklearn.pipeline import Pipeline
@@ -7,7 +8,10 @@ from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import OneHotEncoder
-from utils import config
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+
+import config
 
 train_df = pd.read_csv("data/cleaned/train.csv")
 test_df = pd.read_csv("data/cleaned/test.csv")
