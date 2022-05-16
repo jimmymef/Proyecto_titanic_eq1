@@ -1,17 +1,26 @@
 import pandas as pd
-import sys
-import os
-from utils import transformers_categorical as tc
-from utils import transformers_numerical as tn
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import OneHotEncoder
 
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir))
+# Los imports de abajo los dejo con fines didácticos.
+if __name__ == "__main__":
+    # os and sys are necessary to import config
+    import sys
+    import os
+    from utils import transformers_categorical as tc
+    from utils import transformers_numerical as tn
 
-import config
+    sys.path.append(
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)
+    )
+    import config
+
+else:
+    from .. import config
+    from .utils import transformers_categorical as tc
+    from .utils import transformers_numerical as tn
 
 train_df = pd.read_csv("data/cleaned/train.csv")
 test_df = pd.read_csv("data/cleaned/test.csv")
@@ -71,3 +80,5 @@ processed_test_df = processed_test_df[processed_train_df.columns]
 # Save processed DFs
 processed_train_df.to_csv(config.PROCESSED_TRAIN_DATA_FILE, index=False)
 processed_test_df.to_csv(config.PROCESSED_TEST_DATA_FILE, index=False)
+
+print("feature engineering ready!")

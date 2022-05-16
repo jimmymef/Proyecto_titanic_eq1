@@ -24,3 +24,5 @@ for s, Xy in zip(["train", "test"], [(X_train, y_train), (X_test, y_test)]):
     print("{} roc-auc : {}".format(s, roc_auc_score(y, proba_pred)))
     print("{} accuracy: {}".format(s, accuracy_score(y, class_pred)))
 print(f"\n")
+
+print("model scoring ready!")

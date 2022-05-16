@@ -18,3 +18,5 @@ logreg_model = LogisticRegression(
 logreg_model.fit(X_train, y_train)
 
 joblib.dump(logreg_model, config.MODEL_FILE)
+
+print("model training ready!")

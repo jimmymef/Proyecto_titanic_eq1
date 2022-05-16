@@ -35,3 +35,5 @@ X_test.to_csv(config.TEST_DATA_FILE, index=False)
 
 y_train.to_csv(config.TRAIN_TARGET_FILE, index=False)
 y_test.to_csv(config.TEST_TARGET_FILE, index=False)
+
+print("clean data ready!")
